@@ -15,6 +15,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         self.n_layer = config.num_hidden_layers
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
+        config.initializer_range = 0.02
         self.mt5 = MT5Model.from_pretrained('google/mt5-base', config=config)
         self.init_weights()
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
