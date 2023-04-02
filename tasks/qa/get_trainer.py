@@ -55,6 +55,11 @@ def get_trainer(args):
         if 'mt5' in model_args.model_name_or_path:
             # add later -Lifu
             print('mt5')
+            config = AutoConfig.from_pretrained(
+                model_args.model_name_or_path,
+                revision=model_args.model_revision,
+            )
+            config.initializer_range = 0.02
             training_args.generation_max_length = 30
             training_args.predict_with_generate = True
             #training_args.generation_num_beams = 5
