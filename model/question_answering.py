@@ -74,6 +74,9 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
             Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
             sequence are not taken into account for computing the loss.
         """
+        print("labels = ", labels)
+        print("decoder_input_ids = ", decoder_input_ids)
+
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         batch_size = input_ids.shape[0]
@@ -86,7 +89,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
             attention_mask=attention_mask,
             past_key_values=past_key_values,
             labels = labels,   #see here
-            decoder_input_ids = labels
+            decoder_input_ids = decoder_input_ids
         )
 
         total_loss = outputs.loss
