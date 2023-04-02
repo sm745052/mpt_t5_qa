@@ -2,7 +2,7 @@ import torch
 import torch.nn
 from torch.nn import CrossEntropyLoss
 from transformers import BertPreTrainedModel, BertModel, RobertaPreTrainedModel, RobertaModel
-from transformers import T5Tokenizer, T5ForConditionalGeneration, MT5Model
+from transformers import T5Tokenizer, T5ForConditionalGeneration, MT5Model, MT5ForConditionalGeneration
 from transformers.modeling_outputs import QuestionAnsweringModelOutput
 
 from model.prefix_encoder import PrefixEncoder
@@ -15,7 +15,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         self.n_layer = config.num_hidden_layers
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
-        self.mt5 = MT5Model.from_pretrained('google/mt5-base', config=config)
+        self.mt5 = MT5ForConditionalGeneration.from_pretrained('google/mt5-base', config=config)
         self.init_weights()
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
         self.prefix_encoder = PrefixEncoder(config)
@@ -61,7 +61,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
-        decoder_input_ids = None
+        labels=None,
     ):
         r"""
         start_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
@@ -84,7 +84,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
             input_ids,
             attention_mask=attention_mask,
             past_key_values=past_key_values,
-            decoder_input_ids = decoder_input_ids   #see here
+            labels = labels   #see here
         )
 
         total_loss = outputs.loss
