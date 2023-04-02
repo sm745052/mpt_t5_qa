@@ -62,6 +62,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         output_hidden_states=None,
         return_dict=None,
         labels=None,
+        decoder_input_ids=None
     ):
         r"""
         start_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
@@ -85,6 +86,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
             attention_mask=attention_mask,
             past_key_values=past_key_values,
             labels = labels   #see here
+            decoder_input_ids = decoder_input_ids
         )
 
         total_loss = outputs.loss
