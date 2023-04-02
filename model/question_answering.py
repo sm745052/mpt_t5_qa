@@ -16,7 +16,7 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
         self.mt5 = T5ForConditionalGeneration.from_pretrained('t5-base')
-        self.init_weights()
+        # self.init_weights()
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
         self.prefix_encoder = PrefixEncoder(config)
         self.prefix_tokens = torch.arange(self.pre_seq_len).long()
