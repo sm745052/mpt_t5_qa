@@ -61,7 +61,7 @@ def get_trainer(args):
             #model = MT5ForConditionalGeneration.from_pretrained(model_args.model_name_or_path)
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=True)
             #tokenizer = PreTrainedTokenizerFast.from_pretrained(model_args.model_name_or_path)
-            tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path)
+            tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
             ## tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
             dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)
         else:
