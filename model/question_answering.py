@@ -83,7 +83,6 @@ class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
         outputs = self.mt5(
             input_ids,
             attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
             past_key_values=past_key_values,
             labels = labels   #see here
         )
