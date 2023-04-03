@@ -8,7 +8,7 @@ from transformers.modeling_outputs import QuestionAnsweringModelOutput
 from model.prefix_encoder import PrefixEncoder
 from model.deberta import DebertaPreTrainedModel, DebertaModel
 
-class MT5PrefixForQuestionAnswering(RobertaPreTrainedModel):
+class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
     def __init__(self, config):
         super().__init__(config)
         self.pre_seq_len = config.pre_seq_len
