@@ -4,5 +4,5 @@ btp@123
 
 
 sm745052
-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
+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
 sh run_script/run_mt5_squad.sh google/mt5-base 0.005 0  16 1
