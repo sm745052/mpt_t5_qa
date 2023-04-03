@@ -27,6 +27,10 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         mt5_param = 0
         for name, param in self.mt5.named_parameters():
             mt5_param += param.numel()
+
+        print("--", mt5_param)
+
+
         all_param = 0
         for name, param in self.named_parameters():
             all_param += param.numel()
