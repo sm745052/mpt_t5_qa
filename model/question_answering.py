@@ -15,7 +15,7 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         self.n_layer = config.num_hidden_layers
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
-        self.mt5 = super().from_pretrained('google/mt5-small', config=config)
+        self.mt5 = super().from_pretrained('google/mt5-base', config=config)
         self.init_weights()
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
         self.prefix_encoder = PrefixEncoder(config)
