@@ -10,4 +10,5 @@ sh run_script/run_mt5_squad.sh google/mt5-base 0.005 0  16 1
 
 okay
 
-git push -u origin
+git add .
+git commit "hello"
