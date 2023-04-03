@@ -84,7 +84,7 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         prefix_attention_mask = torch.ones(batch_size, self.pre_seq_len).to(self.mt5.device)
         attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
 
-        print(past_key_values.shape)
+        print(past_key_values)
 
         outputs = self.mt5(
             input_ids,
