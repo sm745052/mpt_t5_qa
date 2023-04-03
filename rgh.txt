@@ -2,5 +2,7 @@ ssh btp@10.5.31.145
 btp@123
 
 
+
+sm745052
 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
 sh run_script/run_mt5_squad.sh google/mt5-base 0.005 0  16 1
