@@ -35,6 +35,10 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         for name, param in self.named_parameters():
             all_param += param.numel()
         total_param = all_param - mt5_param
+
+
+        print("--", all_param)
+        
         print('total param is {}'.format(total_param))
 
     def get_prompt(self, batch_size):
