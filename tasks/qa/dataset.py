@@ -3,6 +3,7 @@ from torch.utils.data.sampler import RandomSampler, SequentialSampler
 from torch.utils.data import DataLoader
 from datasets.arrow_dataset import Dataset as HFDataset
 from datasets.load import load_metric, load_dataset
+from datasets import Dataset
 from transformers import AutoTokenizer, DataCollatorForTokenClassification, BertConfig
 from transformers import default_data_collator, EvalPrediction
 import numpy as np
@@ -275,6 +276,11 @@ class SQuAD_seq2seq:
         else:
             raw_datasets = load_dataset(data_args.dataset_name)
             column_names = raw_datasets['train'].column_names
+            
+        raw_datasets['train'] = raw_datasets['train'][:100]
+        raw_datasets['validation'] = raw_datasets['validation'][:20]
+        
+        #print("The raw dataset is:", len(raw_datasets['train']['id']))
 
         self.question_column_name = "question"
         self.context_column_name = "context"
@@ -291,11 +297,13 @@ class SQuAD_seq2seq:
         
         if training_args.do_train:
             self.train_dataset = raw_datasets['train']
+            self.train_dataset = Dataset.from_dict(self.train_dataset)
+            print(self.train_dataset)
             self.train_dataset = self.train_dataset.map(
                 self.prepare_train_dataset_,
                 batched=True,
                 remove_columns=column_names,
-                load_from_cache_file=True,
+                load_from_cache_file=False,
                 desc="Running tokenizer on train dataset",
             )
     
@@ -313,11 +321,14 @@ class SQuAD_seq2seq:
 
             if data_args.max_eval_samples is not None:
                 self.eval_examples = self.eval_examples.select(range(data_args.max_eval_samples))
+            
+            self.eval_examples = Dataset.from_dict(self.eval_examples)
+            print(self.eval_examples)
             self.eval_dataset = self.eval_examples.map(
                 self.prepare_eval_dataset,
                 batched=True,
                 remove_columns=column_names,
-                load_from_cache_file=True,
+                load_from_cache_file=False,
                 desc="Running tokenizer on validation dataset",
             )
             if data_args.max_eval_samples is not None:
