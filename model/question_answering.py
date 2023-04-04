@@ -15,19 +15,19 @@ class T5PrefixForQuestionAnswering(T5ForConditionalGeneration):
         super().__init__(config)
         self.encoder = T5StackWithPrefix(self.encoder.config, self.shared)
         # sandeep
-        for param in self.encoder.parameters():
-            param.requires_grad = False
-        for param in self.encoder.prefix_embed.parameters():
-            param.requires_grad = True
+        # for param in self.encoder.parameters():
+        #     param.requires_grad = False
+        # for param in self.encoder.prefix_embed.parameters():
+        #     param.requires_grad = True
         # sandeep'
         self.decoder = T5StackWithPrefix(self.decoder.config, self.shared)
         # sandeep
-        for param in self.decoder.parameters():
-            param.requires_grad = False
-        for param in self.decoder.prefix_embed.parameters():
-            param.requires_grad = True
-        for param in self.decoder.prefix_embed_cross.parameters():
-            param.requires_grad = True
+        # for param in self.decoder.parameters():
+        #     param.requires_grad = False
+        # for param in self.decoder.prefix_embed.parameters():
+        #     param.requires_grad = True
+        # for param in self.decoder.prefix_embed_cross.parameters():
+        #     param.requires_grad = True
         # sandeep'
         self.init_weights()
 # sandeep'
