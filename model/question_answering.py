@@ -7,115 +7,126 @@ from transformers.modeling_outputs import QuestionAnsweringModelOutput
 
 from model.prefix_encoder import PrefixEncoder
 from model.deberta import DebertaPreTrainedModel, DebertaModel
+from prefix_mt5 import *
 
-class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
+class MT5PrefixForQuestionAnswering(T5ForConditionalGeneration):
     def __init__(self, config):
         super().__init__(config)
-        self.pre_seq_len = config.pre_seq_len
-        self.n_layer = config.num_hidden_layers
-        self.n_head = config.num_attention_heads
-        self.n_embd = config.hidden_size // config.num_attention_heads
-        self.mt5 = MT5ForConditionalGeneration.from_pretrained("google/mt5-base",config)
+        self.encoder = T5StackWithPrefix(self.encoder.config, self.shared)
+        self.decoder = T5StackWithPrefix(self.decoder.config, self.shared)
         self.init_weights()
-        self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
-        self.prefix_encoder = PrefixEncoder(config)
-        self.prefix_tokens = torch.arange(self.pre_seq_len).long()
-
-        for param in self.mt5.parameters():
-            param.requires_grad = False
-
-        mt5_param = 0
-        for name, param in self.mt5.named_parameters():
-            mt5_param += param.numel()
-
-        print("--", mt5_param)
 
 
-        all_param = 0
-        for name, param in self.named_parameters():
-            all_param += param.numel()
-        total_param = all_param - mt5_param
 
 
-        print("--", all_param)
+# class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
+#     def __init__(self, config):
+#         super().__init__(config)
+#         self.pre_seq_len = config.pre_seq_len
+#         self.n_layer = config.num_hidden_layers
+#         self.n_head = config.num_attention_heads
+#         self.n_embd = config.hidden_size // config.num_attention_heads
+#         self.mt5 = MT5ForConditionalGeneration.from_pretrained("google/mt5-base",config)
+#         self.init_weights()
+#         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
+#         self.prefix_encoder = PrefixEncoder(config)
+#         self.prefix_tokens = torch.arange(self.pre_seq_len).long()
 
-        print('total param is {}'.format(total_param))
+#         for param in self.mt5.parameters():
+#             param.requires_grad = False
 
-    def get_prompt(self, batch_size):
-        prefix_tokens = self.prefix_tokens.unsqueeze(0).expand(batch_size, -1).to(self.mt5.device)
-        past_key_values = self.prefix_encoder(prefix_tokens)
-        bsz, seqlen, _ = past_key_values.shape
-        past_key_values = past_key_values.view(
-            bsz,
-            seqlen,
-            self.n_layer * 2, 
-            self.n_head,
-            self.n_embd
-        )
-        past_key_values = self.dropout(past_key_values)
-        past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
-        return past_key_values
+#         mt5_param = 0
+#         for name, param in self.mt5.named_parameters():
+#             mt5_param += param.numel()
 
-    def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        token_type_ids=None,
-        position_ids=None,
-        head_mask=None,
-        inputs_embeds=None,
-        start_positions=None,
-        end_positions=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
-        labels=None,
-        decoder_input_ids=None
-    ):
-        r"""
-        start_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
-            Labels for position (index) of the start of the labelled span for computing the token classification loss.
-            Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
-            sequence are not taken into account for computing the loss.
-        end_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
-            Labels for position (index) of the end of the labelled span for computing the token classification loss.
-            Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
-            sequence are not taken into account for computing the loss.
-        """
-        print("labels = ", labels)
-        print("decoder_input_ids = ", decoder_input_ids)
+#         print("--", mt5_param)
 
-        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        batch_size = input_ids.shape[0]
-        past_key_values = self.get_prompt(batch_size=batch_size)
-        prefix_attention_mask = torch.ones(batch_size, self.pre_seq_len).to(self.mt5.device)
-        attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
+#         all_param = 0
+#         for name, param in self.named_parameters():
+#             all_param += param.numel()
+#         total_param = all_param - mt5_param
+
+
+#         print("--", all_param)
+
+#         print('total param is {}'.format(total_param))
+
+#     def get_prompt(self, batch_size):
+#         prefix_tokens = self.prefix_tokens.unsqueeze(0).expand(batch_size, -1).to(self.mt5.device)
+#         past_key_values = self.prefix_encoder(prefix_tokens)
+#         bsz, seqlen, _ = past_key_values.shape
+#         past_key_values = past_key_values.view(
+#             bsz,
+#             seqlen,
+#             self.n_layer * 2, 
+#             self.n_head,
+#             self.n_embd
+#         )
+#         past_key_values = self.dropout(past_key_values)
+#         past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
+#         return past_key_values
+
+#     def forward(
+#         self,
+#         input_ids=None,
+#         attention_mask=None,
+#         token_type_ids=None,
+#         position_ids=None,
+#         head_mask=None,
+#         inputs_embeds=None,
+#         start_positions=None,
+#         end_positions=None,
+#         output_attentions=None,
+#         output_hidden_states=None,
+#         return_dict=None,
+#         labels=None,
+#         decoder_input_ids=None
+#     ):
+#         r"""
+#         start_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
+#             Labels for position (index) of the start of the labelled span for computing the token classification loss.
+#             Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
+#             sequence are not taken into account for computing the loss.
+#         end_positions (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
+#             Labels for position (index) of the end of the labelled span for computing the token classification loss.
+#             Positions are clamped to the length of the sequence (:obj:`sequence_length`). Position outside of the
+#             sequence are not taken into account for computing the loss.
+#         """
+#         print("labels = ", labels)
+#         print("decoder_input_ids = ", decoder_input_ids)
+
+#         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
+#         batch_size = input_ids.shape[0]
+#         past_key_values = self.get_prompt(batch_size=batch_size)
+#         prefix_attention_mask = torch.ones(batch_size, self.pre_seq_len).to(self.mt5.device)
+#         attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
         
-        print("input_ids = ", input_ids.shape)
-        print("past_key_values = ", len(past_key_values), past_key_values[0].shape, past_key_values[1].shape)
-        print("attention_mask", attention_mask.shape)
+#         print("input_ids = ", input_ids.shape)
+#         print("past_key_values = ", len(past_key_values), past_key_values[0].shape, past_key_values[1].shape)
+#         print("attention_mask", attention_mask.shape)
 
-        outputs = self.mt5(
-            input_ids,
-            attention_mask=attention_mask,
-            past_key_values=past_key_values,
-            labels = labels,   #see here
-            decoder_input_ids = decoder_input_ids
-        )
+#         outputs = self.mt5(
+#             input_ids,
+#             attention_mask=attention_mask,
+#             past_key_values=past_key_values,
+#             labels = labels,   #see here
+#             decoder_input_ids = decoder_input_ids
+#         )
 
-        total_loss = outputs.loss
+#         total_loss = outputs.loss
 
         
-        if not return_dict:
-            output = outputs[2:]
-            return ((total_loss,) + output) if total_loss is not None else output
+#         if not return_dict:
+#             output = outputs[2:]
+#             return ((total_loss,) + output) if total_loss is not None else output
 
-        return QuestionAnsweringModelOutput(
-            loss=total_loss,
-            hidden_states=outputs.hidden_states,
-            attentions=outputs.attentions,
-        )
+#         return QuestionAnsweringModelOutput(
+#             loss=total_loss,
+#             hidden_states=outputs.hidden_states,
+#             attentions=outputs.attentions,
+#         )
 
 
 
