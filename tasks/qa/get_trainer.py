@@ -71,6 +71,9 @@ def get_trainer(args):
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=True)
             #tokenizer = PreTrainedTokenizerFast.from_pretrained(model_args.model_name_or_path)
             tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path, model_max_length=512)
+            #sandeep
+            model.resize_token_embeddings(len(tokenizer))
+            #sandeep
             ## tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
             
         else:
