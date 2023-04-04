@@ -2,15 +2,15 @@ import torch
 import torch.nn
 from torch.nn import CrossEntropyLoss
 from transformers import BertPreTrainedModel, BertModel, RobertaPreTrainedModel, RobertaModel
-from transformers import T5Tokenizer, T5ForConditionalGeneration, MT5Model, MT5ForConditionalGeneration
+from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Model, T5ForConditionalGeneration
 from transformers.modeling_outputs import QuestionAnsweringModelOutput
 
 from model.prefix_encoder import PrefixEncoder
 from model.deberta import DebertaPreTrainedModel, DebertaModel
-from model.prefix_mt5 import *
+from model.prefix_t5 import *
 
 # sandeep
-class MT5PrefixForQuestionAnswering(T5ForConditionalGeneration):
+class T5PrefixForQuestionAnswering(T5ForConditionalGeneration):
     def __init__(self, config):
         super().__init__(config)
         self.encoder = T5StackWithPrefix(self.encoder.config, self.shared)

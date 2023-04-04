@@ -19,7 +19,7 @@ from model.question_answering import (
     BertPrefixForQuestionAnswering,
     RobertaPrefixModelForQuestionAnswering,
     DebertaPrefixModelForQuestionAnswering,
-    MT5PrefixForQuestionAnswering
+    T5PrefixForQuestionAnswering
 )
 
 from model.multiple_choice import (
@@ -84,10 +84,10 @@ PREFIX_MODELS = {
         TaskType.QUESTION_ANSWERING: None,
         TaskType.MULTIPLE_CHOICE: None,
     },
-    "mt5": {
+    "t5": {
         TaskType.TOKEN_CLASSIFICATION: None,
         TaskType.SEQUENCE_CLASSIFICATION: None,
-        TaskType.QUESTION_ANSWERING: MT5PrefixForQuestionAnswering,
+        TaskType.QUESTION_ANSWERING: T5PrefixForQuestionAnswering,
         TaskType.MULTIPLE_CHOICE: None,
     }
 }

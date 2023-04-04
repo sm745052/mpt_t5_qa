@@ -54,9 +54,9 @@ def get_trainer(args):
     """
     print(model_args.model_name_or_path)
     if model_args.prefix or model_args.prompt:
-        if 'mt5' in model_args.model_name_or_path:
+        if 't5' in model_args.model_name_or_path:
             # add later -Lifu
-            print('mt5 prefix tuning')
+            print('t5 prefix tuning')
             config = AutoConfig.from_pretrained(
                 model_args.model_name_or_path,
                 revision=model_args.model_revision,
@@ -79,9 +79,9 @@ def get_trainer(args):
             dataset = SQuAD(tokenizer, data_args, training_args, qa_args)
 
     else:
-        if 'mt5' in model_args.model_name_or_path:
+        if 't5' in model_args.model_name_or_path:
             # add later -Lifu
-            print('mt5')
+            print('t5')
             training_args.generation_max_length = 30
             training_args.predict_with_generate = True
             #training_args.generation_num_beams = 5
@@ -95,7 +95,7 @@ def get_trainer(args):
 
             dataset = SQuAD(tokenizer, data_args, training_args, qa_args)
 
-    if 'mt5' in model_args.model_name_or_path:
+    if 't5' in model_args.model_name_or_path:
 
         data_collator = DataCollatorForSeq2Seq(
           tokenizer,
