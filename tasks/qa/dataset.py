@@ -303,7 +303,7 @@ class SQuAD_seq2seq:
                 self.prepare_train_dataset_,
                 batched=True,
                 remove_columns=column_names,
-                load_from_cache_file=False,
+                load_from_cache_file=Fa,
                 desc="Running tokenizer on train dataset",
             )
     

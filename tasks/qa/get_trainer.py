@@ -96,7 +96,7 @@ def get_trainer(args):
             dataset = SQuAD(tokenizer, data_args, training_args, qa_args)
 
     if 't5' in model_args.model_name_or_path:
-
+        print("hello")
         data_collator = DataCollatorForSeq2Seq(
           tokenizer,
           model=model,
@@ -115,7 +115,8 @@ def get_trainer(args):
           post_process_function=dataset.post_processing_function,
           compute_metrics=dataset.compute_metrics,
         ) 
-
+        print("hello")
+        
     else:
 
         trainer = QuestionAnsweringTrainer(
