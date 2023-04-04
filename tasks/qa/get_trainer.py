@@ -95,7 +95,7 @@ def get_trainer(args):
 
             dataset = SQuAD(tokenizer, data_args, training_args, qa_args)
 
-    if 'mt5' in model_args.model_name_or_path:
+    if 't5' in model_args.model_name_or_path:
 
         data_collator = DataCollatorForSeq2Seq(
           tokenizer,
