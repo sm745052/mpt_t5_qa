@@ -7,7 +7,7 @@ from transformers.modeling_outputs import QuestionAnsweringModelOutput
 
 from model.prefix_encoder import PrefixEncoder
 from model.deberta import DebertaPreTrainedModel, DebertaModel
-from prefix_mt5 import *
+from model.prefix_mt5 import *
 
 class MT5PrefixForQuestionAnswering(T5ForConditionalGeneration):
     def __init__(self, config):
