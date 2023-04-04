@@ -70,7 +70,7 @@ def get_trainer(args):
             #model = MT5ForConditionalGeneration.from_pretrained(model_args.model_name_or_path)
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=True)
             #tokenizer = PreTrainedTokenizerFast.from_pretrained(model_args.model_name_or_path)
-            tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path)
+            tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path, model_max_length=512)
             ## tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
             
         else:
@@ -116,7 +116,7 @@ def get_trainer(args):
           compute_metrics=dataset.compute_metrics,
         ) 
         print("hello")
-        
+
     else:
 
         trainer = QuestionAnsweringTrainer(
