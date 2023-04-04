@@ -13,7 +13,7 @@ seed=$5 ##11
 
 
 
-CUDA_VISIBLE_DEVICES=${GPU} python3 run.py \
+python3 run.py \
   --model_name_or_path $1 \
   --task_name $TASK_NAME \
   --dataset_name $DATASET_NAME \
