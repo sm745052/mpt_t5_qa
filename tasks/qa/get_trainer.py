@@ -11,7 +11,8 @@ from transformers import (
 
 from transformers import MT5ForConditionalGeneration, T5Tokenizer, PreTrainedTokenizerFast, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
 
-from tasks.qa.dataset import SQuAD, SQuAD_seq2seq
+#from tasks.qa.dataset import SQuAD, SQuAD_seq2seq
+from tasks.qa.dataset import SQuAD_seq2seq
 
 from training.trainer_qa import QuestionAnsweringTrainer
 from training.trainer_seq2seq_qa import QuestionAnsweringSeq2seqTrainer
@@ -51,10 +52,11 @@ def get_trainer(args):
         use_fast=True,
     )
     """
+    print(model_args.model_name_or_path)
     if model_args.prefix or model_args.prompt:
         if 'mt5' in model_args.model_name_or_path:
             # add later -Lifu
-            print('mt5')
+            print('mt5 prefix tuning')
             config = AutoConfig.from_pretrained(
                 model_args.model_name_or_path,
                 revision=model_args.model_revision,
@@ -62,13 +64,15 @@ def get_trainer(args):
             config.initializer_range = 0.02
             training_args.generation_max_length = 30
             training_args.predict_with_generate = True
+            dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)
+            print("got dataset")
             #training_args.generation_num_beams = 5
             #model = MT5ForConditionalGeneration.from_pretrained(model_args.model_name_or_path)
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=True)
             #tokenizer = PreTrainedTokenizerFast.from_pretrained(model_args.model_name_or_path)
             tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path)
             ## tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
-            dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)
+            
         else:
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=True)
 
@@ -85,8 +89,7 @@ def get_trainer(args):
             model = AutoModelForSeq2SeqLM.from_pretrained(model_args.model_name_or_path)
             #tokenizer = PreTrainedTokenizerFast.from_pretrained(model_args.model_name_or_path)
             tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
-            dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)
-           
+            dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)           
         else:
             model = get_model(model_args, TaskType.QUESTION_ANSWERING, config, fix_bert=False)
 

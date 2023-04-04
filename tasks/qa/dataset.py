@@ -37,7 +37,7 @@ def preprocess_squad_batch(examples, question_column, context_column, answer_col
         return inputs, targets
 
 
-
+'''
 class SQuAD:
 
     def __init__(self, tokenizer: AutoTokenizer, data_args, training_args, qa_args) -> None:
@@ -241,7 +241,7 @@ class SQuAD:
         #from transformers.data.metrics.squad_metrics import squad_evaluate
         #print(squad_evaluate(formatted_predictions, references))
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
-
+'''
 
 
 
@@ -287,15 +287,15 @@ class SQuAD_seq2seq:
 
         self.max_answer_length = 30
         self.padding = "max_length"
-
-
+        self.train_dataset = raw_datasets['train']
+        
         if training_args.do_train:
             self.train_dataset = raw_datasets['train']
             self.train_dataset = self.train_dataset.map(
-                self.prepare_train_dataset,
+                self.prepare_train_dataset_,
                 batched=True,
                 remove_columns=column_names,
-                load_from_cache_file=True,
+                load_from_cache_file=False,
                 desc="Running tokenizer on train dataset",
             )
     
@@ -332,8 +332,12 @@ class SQuAD_seq2seq:
         #    self.metric = load_metric(data_args.dataset_name)
         #else:
         self.metric = load_metric('squad')
+        
+        print("The raw dataset is:", raw_datasets['train'])
+        print("The processed dataset is now:", self.train_dataset)
 
-    def prepare_train_dataset(self, examples):
+    def prepare_train_dataset_(self, examples):
+        print("called")
         inputs, targets = preprocess_squad_batch(examples, 'question', 'context', 'answers')
 
         model_inputs = self.tokenizer(inputs, max_length=self.max_seq_length, padding=self.padding, truncation=True)
@@ -349,6 +353,8 @@ class SQuAD_seq2seq:
             ]
 
         model_inputs["labels"] = labels["input_ids"]
+        
+        print("keys: ",model_inputs.keys())
         return model_inputs
 
 

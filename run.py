@@ -98,6 +98,8 @@ if __name__ == '__main__':
 
     if not os.path.isdir("checkpoints") or not os.path.exists("checkpoints"):
         os.mkdir("checkpoints")
+        
+    #print('Task name: ', data_args.task_name)
 
     if data_args.task_name.lower() == "superglue":
         assert data_args.dataset_name.lower() in SUPERGLUE_DATASETS

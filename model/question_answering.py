@@ -15,7 +15,7 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         self.n_layer = config.num_hidden_layers
         self.n_head = config.num_attention_heads
         self.n_embd = config.hidden_size // config.num_attention_heads
-        self.mt5 = MT5Model(config)
+        self.mt5 = MT5ForConditionalGeneration.from_pretrained("google/mt5-base",config)
         self.init_weights()
         self.dropout = torch.nn.Dropout(config.hidden_dropout_prob)
         self.prefix_encoder = PrefixEncoder(config)
@@ -91,8 +91,10 @@ class MT5PrefixForQuestionAnswering(MT5ForConditionalGeneration):
         past_key_values = self.get_prompt(batch_size=batch_size)
         prefix_attention_mask = torch.ones(batch_size, self.pre_seq_len).to(self.mt5.device)
         attention_mask = torch.cat((prefix_attention_mask, attention_mask), dim=1)
-
-        print(past_key_values)
+        
+        print("input_ids = ", input_ids.shape)
+        print("past_key_values = ", len(past_key_values), past_key_values[0].shape, past_key_values[1].shape)
+        print("attention_mask", attention_mask.shape)
 
         outputs = self.mt5(
             input_ids,
