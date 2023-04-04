@@ -118,7 +118,7 @@ def get_model(model_args, task_type: TaskType, config: AutoConfig, fix_bert: boo
         config.prefix_hidden_size = model_args.prefix_hidden_size
         config.num_prefix = model_args.pre_seq_len     #sandeep
         config.reparam = False
-        config.reparam_dim = 512
+        config.reparam_dim = 256
         config.no_decoder_self_attn = False
         model_class = PREFIX_MODELS[config.model_type][task_type]
 
@@ -127,6 +127,7 @@ def get_model(model_args, task_type: TaskType, config: AutoConfig, fix_bert: boo
             config=config,
             revision=model_args.model_revision,
         )
+        model.decoder_start_token_id = 0
         print("prefix tuning", model_args.model_name_or_path, model_class, config.model_type)
 
     elif model_args.prompt:
