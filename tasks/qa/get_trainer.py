@@ -61,7 +61,7 @@ def get_trainer(args):
                 model_args.model_name_or_path,
                 revision=model_args.model_revision,
             )
-            config.initializer_range = 0.02
+            # config.initializer_range = 0.02
             training_args.generation_max_length = 30
             training_args.predict_with_generate = True
             dataset = SQuAD_seq2seq(tokenizer, data_args, training_args, qa_args)
