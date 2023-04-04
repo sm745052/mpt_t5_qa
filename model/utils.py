@@ -116,8 +116,9 @@ def get_model(model_args, task_type: TaskType, config: AutoConfig, fix_bert: boo
         config.pre_seq_len = model_args.pre_seq_len
         config.prefix_projection = model_args.prefix_projection
         config.prefix_hidden_size = model_args.prefix_hidden_size
-        
+        config.num_prefix = model_args.pre_seq_len     #sandeep
         model_class = PREFIX_MODELS[config.model_type][task_type]
+
         model = model_class.from_pretrained(
             model_args.model_name_or_path,
             config=config,
