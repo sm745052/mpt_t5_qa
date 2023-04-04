@@ -73,6 +73,8 @@ def get_trainer(args):
             tokenizer = T5Tokenizer.from_pretrained(model_args.model_name_or_path, model_max_length=512)
             #sandeep
             model.resize_token_embeddings(len(tokenizer))
+            print(model.state_dict()['shared.weight'].shape)
+            print(len(tokenizer))
             #sandeep
             ## tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path, use_fast=True)
             
